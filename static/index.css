@@ -1,0 +1,17 @@
+.sport {
+  border: #000 1px dotted;
+  background-color: #eee;
+  padding: 3px;
+}
+
+.tournament {
+  border: #000 1px dotted;
+  background-color: #fff;
+  padding: 3px;
+}
+
+.event {
+  border: #000 1px solid;
+  background-color: pink;
+  padding: 3px;
+}
