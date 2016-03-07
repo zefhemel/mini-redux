@@ -2,63 +2,117 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var PureRenderMixin = require('react-addons-pure-render-mixin');
 var update = require('react-addons-update');
+var connect = require('./miniredux').connect;
+var Store = require('./miniredux').Store;
 
-var appState = [{
-    id: 2001,
-    name: "Basketball",
-    tournaments: [{
-        id: 1001,
-        name: "NBA",
-        events: [{
-            id: 8001,
-            name: "Lakers vs Chicago Bulls"
-        }, {
-            id: 8002,
-            name: "Zef vs Radek"
+// Initial state
+var initialState = {
+    children: [{
+        id: 2001,
+        name: "Basketball",
+        children: [{
+            id: 1001,
+            name: "NBA",
+            children: [{
+                id: 8001,
+                name: "Lakers vs Chicago Bulls"
+            }, {
+                id: 8002,
+                name: "Zef vs Radek"
+            }]
         }]
     }]
-}];
-
-// Wannabe event emitter 
-var globalEmitter = {
-    callback: null,
-    on: function (eventName, callback) {
-        this.callback = callback;
-    },
-    emit: function (eventName, data) {
-        this.callback(data);
-    }
 };
 
-var SportPage = React.createClass({
-    getInitialState: function () {
-        return {
-            sports: appState
-        };
-    },
-    componentWillMount: function () {
-        globalEmitter.on("update", (sports) => {
-            this.setState({sports: sports});
+// Reducer
+
+function randomId() {
+    return Math.floor(Math.random() * 1000);
+}
+
+function rootReducer(oldState, action) {
+    switch(action.type) {
+    case 'ADD_SPORT':
+        return update(oldState, {
+            children: {
+                $push: [{ // Sport
+                    id: randomId(),
+                    name: "Football " + randomId(),
+                    children: [
+                        {
+                            id: randomId(),
+                            name: "Major League " + randomId(),
+                            children: [
+                                {
+                                    id: randomId(),
+                                    name: "Netherlands vs Poland" + randomId()
+                                },
+                            ]
+                        }
+                    ]
+                }]
+            }
         });
-    },
+    case 'UPDATE_SPORT':
+        return update(oldState, {
+            children: {
+                0: {
+                    children: {
+                        0: {
+                            children: {
+                                0: {
+                                    name: {
+                                        $apply: function (v) {
+                                            return v + "!!!!";
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }                
+            }
+        });
+    }
+}
+
+// Store
+var store = new Store(initialState, rootReducer, true);
+
+// Components
+var SportPage = React.createClass({
+    mixins: [PureRenderMixin],
     render: function () {
-        var sports = this.state.sports;
+        var sports = this.props.state.children;
         console.log("Rerendering whole page");
         return (
             <div className="sportList">
+                <h1>{this.props.title}</h1>
                 {sports.map(sport => (
                     <Sport sport={sport} key={sport.id}/>
                 ))}
+                <button onClick={this.addSport}>Add sport</button>
+                <button onClick={this.updateSport}>Update sport</button>
             </div>
         );
+    },
+    addSport: function() {
+        this.props.dispatch({
+            type: 'ADD_SPORT'
+        });
+    },
+    updateSport: function() {
+        this.props.dispatch({
+            type: 'UPDATE_SPORT'
+        });
     }
 });
 
 var Sport = React.createClass({
     mixins: [PureRenderMixin],
     render: function () {
-        let sport = this.props.sport,
-            tournaments = sport.tournaments;
+        var sport = this.props.sport,
+            tournaments = sport.children;
         console.log("Rerendering sport", sport);
         return (
             <div className="sport">
@@ -74,8 +128,8 @@ var Sport = React.createClass({
 var Tournament = React.createClass({
     mixins: [PureRenderMixin],
     render: function () {
-        let tournament = this.props.tournament,
-            events = tournament.events;
+        var tournament = this.props.tournament,
+            events = tournament.children;
         console.log("Rerendering tournament", tournament);
         return (
             <div className="tournament">
@@ -91,7 +145,7 @@ var Tournament = React.createClass({
 var Event = React.createClass({
     mixins: [PureRenderMixin],
     render: function () {
-        let event = this.props.event;
+        var event = this.props.event;
         console.log("Rerendering event", event);
         return (
             <div className="event">
@@ -101,57 +155,10 @@ var Event = React.createClass({
     }
 });
 
+// Connect store to root component
+var RootComponent = connect(SportPage, store);
+
 ReactDOM.render(
-    <SportPage/>,
+    <RootComponent title="My sports page"/>,
     document.getElementById('container')
 );
-
-
-// Terrible, wannabe websocket data receive thingie
-document.getElementById("add-button").onclick = function () {
-    function randomId() {
-        return Math.floor(Math.random() * 1000);
-    }
-
-    appState = update(appState, {
-        $push: [{ // Sport
-            id: randomId(),
-            name: "Football " + randomId(),
-            tournaments: [
-                {
-                    id: randomId(),
-                    name: "Major League " + randomId(),
-                    events: [
-                        {
-                            id: randomId(),
-                            name: "Netherlands vs Poland" + randomId()
-                        },
-                    ]
-                }
-            ]
-        }]
-    });
-    globalEmitter.emit("update", appState);
-};
-
-// Terrible, wannabe websocket data receive thingie
-document.getElementById("update-button").onclick = function () {
-    appState = update(appState, {
-        0: {
-            tournaments: {
-                0: {
-                    events: {
-                        0: {
-                            name: {
-                                $apply: function (v) {
-                                    return v + "!!!!";
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    });
-    globalEmitter.emit("update", appState);
-};

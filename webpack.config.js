@@ -7,11 +7,13 @@ module.exports = {
     devtool: "source-map",
     entry: {
         app: [
-            "./src/index.jsx"
+            "./src/index.jsx",
+            "./src/index.html",
+            "./src/index.css"
         ]
     },
     output: {
-        path: __dirname + "/static",
+        path: __dirname + "/out",
         filename: "bundle.js",
         // publicPath: "/static/",
     },
@@ -24,6 +26,9 @@ module.exports = {
             test: /\.jsx|\.js$/,
             exclude: /node_modules/,
             loader: "babel?presets[]=react,presets[]=es2015"
+        }, {
+            test: /\.html|\.css$/,
+            loader: "file?name=[path][name].[ext]&context=src"
         }]
     }
 };
