@@ -7,15 +7,14 @@ module.exports = {
     devtool: "source-map",
     entry: {
         app: [
-            "./src/index.jsx",
-            "./src/index.html",
-            "./src/index.css"
+            "./src/sample/index.jsx",
+            "./src/sample/index.html",
+            "./src/sample/index.css"
         ]
     },
     output: {
         path: __dirname + "/out",
-        filename: "bundle.js",
-        // publicPath: "/static/",
+        filename: "sample/bundle.js",
     },
     resolve: {
         modulesDirectories: ["node_modules"],

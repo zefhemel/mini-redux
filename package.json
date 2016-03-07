@@ -4,8 +4,10 @@
   "scripts": {
     "build": "./node_modules/.bin/webpack",
     "build:production": "./node_modules/.bin/webpack -p",
+    "dev": "./node_modules/.bin/webpack-dev-server",
     "watch": "./node_modules/.bin/webpack -w",
-    "test": "./node_modules/.bin/mocha test"
+    "test": "./node_modules/.bin/mocha test test/sample",
+    "clean": "rm -rf out node_modules"
   },
   "devDependencies": {
     "babel-core": "^6.1.20",
@@ -15,7 +17,8 @@
     "chai": "^3.5.0",
     "file-loader": "^0.8.1",
     "mocha": "^2.4.5",
-    "webpack": "^1.7.2"
+    "webpack": "^1.7.2",
+    "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
     "event-emitter": "^0.3.4",

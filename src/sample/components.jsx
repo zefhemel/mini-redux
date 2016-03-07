@@ -1,61 +1,6 @@
 var React = require('react');
-var ReactDOM = require('react-dom');
 var PureRenderMixin = require('react-addons-pure-render-mixin');
-var connect = require('./redux-lite').connect;
-var Store = require('./redux-lite').Store;
-var pushIn = require('./immutable-lite').pushIn;
-var updateIn = require('./immutable-lite').updateIn;
 
-// Initial state
-var initialState = {
-    children: [{
-        id: 2001,
-        name: "Basketball",
-        children: [{
-            id: 1001,
-            name: "NBA",
-            children: [{
-                id: 8001,
-                name: "Lakers vs Chicago Bulls"
-            }, {
-                id: 8002,
-                name: "Zef vs Radek"
-            }]
-        }]
-    }]
-};
-
-// Reducer
-
-function randomId() {
-    return Math.floor(Math.random() * 1000);
-}
-
-function rootReducer(oldState, action) {
-    switch(action.type) {
-    case 'ADD_SPORT':
-        return pushIn(oldState, ['children'], [{
-            id: randomId(),
-            name: "Football " + randomId(),
-            children: [{
-                id: randomId(),
-                name: "Major League " + randomId(),
-                children: [{
-                    id: randomId(),
-                    name: "Netherlands vs Poland" + randomId()
-                }]
-            }]
-        }]);
-    case 'UPDATE_SPORT':
-        return updateIn(oldState, ['children', 0, 'children', 0, 'children', 0, 'name'],
-                  function (v) { return v + "!!!!"; });
-    }
-}
-
-// Store
-var store = new Store(initialState, rootReducer, true);
-
-// Components
 var SportPage = React.createClass({
     mixins: [PureRenderMixin],
     render: function () {
@@ -67,19 +12,32 @@ var SportPage = React.createClass({
                 {sports.map(sport => (
                     <Sport sport={sport} key={sport.id}/>
                 ))}
-                <button onClick={this.addSport}>Add sport</button>
-                <button onClick={this.updateSport}>Update sport</button>
+                <button onClick={this.addFootball}>Add football</button>
+                <button onClick={this.yellFirstEvent}>Yell event</button>
             </div>
         );
     },
-    addSport: function() {
+    addFootball: function() {
+        var sports = this.props.state.children;
         this.props.dispatch({
-            type: 'ADD_SPORT'
+            type: 'ADD_SPORT',
+            data: {
+                id: sports.length,
+                name: "Football " + sports.length,
+                children: [{
+                    id: 1,
+                    name: "Major League",
+                    children: [{
+                        id: 1,
+                        name: "Netherlands vs Poland"
+                    }]
+                }]
+            }
         });
     },
-    updateSport: function() {
+    yellFirstEvent: function() {
         this.props.dispatch({
-            type: 'UPDATE_SPORT'
+            type: 'YELL_EVENT'
         });
     }
 });
@@ -131,10 +89,6 @@ var Event = React.createClass({
     }
 });
 
-// Connect store to root component
-var RootComponent = connect(SportPage, store);
-
-ReactDOM.render(
-    <RootComponent title="My sports page"/>,
-    document.getElementById('container')
-);
+module.exports = {
+    SportPage: SportPage
+};
