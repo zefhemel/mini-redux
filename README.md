@@ -2,10 +2,14 @@ Redux lite
 ==========
 
 A super simple implementation of [Redux](https://github.com/reactjs/redux),
-as well as [ImmutableJS](https://facebook.github.io/immutable-js/).
+as well as [ImmutableJS](https://facebook.github.io/immutable-js/)
+(but using POJSOs — Plain Old JavaScript Objects).
 
 Code organization
 -----------------
+This repo uses [Webpack](https://webpack.github.io/) and
+[BabelJS](https://babeljs.io/) to compile JSX + CommonJS modules
+to plain JS.
 
 * `src/`: Core source files:
     * `immutable-lite.js`: ImmutableJS-like API, but using plain-old JS objects
