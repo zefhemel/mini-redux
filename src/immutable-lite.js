@@ -38,24 +38,48 @@ function setInSpec(path, value) {
     return buildPath(path, COMMAND_SET, value);
 }
 
-function pushInSpec(path, value) {
-    return buildPath(path, COMMAND_PUSH, value);
-}
-
-function updateInSpec(path, value) {
-    return buildPath(path, COMMAND_APPLY, value);
-}
-
 function setIn(obj, path, value) {
     return update(obj, setInSpec(path, value));
+}
+
+function pushInSpec(path, value) {
+    return buildPath(path, COMMAND_PUSH, value);
 }
 
 function pushIn(obj, path, values) {
     return update(obj, pushInSpec(path, values));
 }
 
-function updateIn(obj, path, fn) {
-    return update(obj, updateInSpec(path, fn));
+function unshiftInSpec(path, values) {
+    return buildPath(path, COMMAND_UNSHIFT, values);
+}
+
+function unshiftIn(obj, path, values) {
+    return update(obj, unshiftInSpec(path, values));
+}
+
+function mergeInSpec(path, value) {
+    return buildPath(path, COMMAND_MERGE, value);
+}
+
+function mergeIn(obj, path, value) {
+    return update(obj, mergeInSpec(path, value));
+}
+
+function spliceInSpec(path, args) {
+    return buildPath(path, COMMAND_SPLICE, args);
+}
+
+function spliceIn(obj, path, args) {
+    return update(obj, spliceInSpec(path, args));
+}
+
+function applyInSpec(path, value) {
+    return buildPath(path, COMMAND_APPLY, value);
+}
+
+function applyIn(obj, path, fn) {
+    return update(obj, applyInSpec(path, fn));
 }
 
 function assign(target) {
@@ -73,7 +97,7 @@ function assign(target) {
     return output;
 }
 
-// Ported from https://github.com/facebook/react/blob/master/src/addons/update.js
+// Migrated from https://github.com/facebook/react/blob/master/src/addons/update.js
 // And simplified a bit
 
 function shallowCopy(x) {
@@ -178,10 +202,15 @@ function mergeSpecs(specs) {
 module.exports = {
     setIn: setIn,
     setInSpec: setInSpec,
-    updateInSpec: updateInSpec,
+    applyInSpec: applyInSpec,
+    applyIn: applyIn,
     pushIn: pushIn,
     pushInSpec: pushInSpec,
-    updateIn: updateIn,
+    unshiftIn: unshiftIn,
+    unshiftInSpec: unshiftInSpec,
+    mergeIn: mergeIn,
+    mergeInSpec: mergeInSpec,
+    
     update: update,
     mergeSpecs: mergeSpecs,
 };

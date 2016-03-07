@@ -11,7 +11,7 @@ describe("Stores", function () {
                 case 'TEST':
                     return immutable.setIn(oldState, ['name'], 'B');
                 case 'INC':
-                    return immutable.updateIn(oldState, ['counter'], function(v) {
+                    return immutable.applyIn(oldState, ['counter'], function(v) {
                         return v + action.n;
                     });
                 default:

@@ -26,7 +26,7 @@ function rootReducer(oldState, action) {
         case 'ADD_SPORT':
             return immutable.pushIn(oldState, ['children'], [action.data]);
         case 'YELL_EVENT':
-            return immutable.updateIn(oldState, ['children', 0, 'children', 0, 'children', 0, 'name'],
+            return immutable.applyIn(oldState, ['children', 0, 'children', 0, 'children', 0, 'name'],
                 function (v) { return v + "!!!"; });
     }
 }
