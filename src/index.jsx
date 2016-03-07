@@ -2,8 +2,10 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var PureRenderMixin = require('react-addons-pure-render-mixin');
 var update = require('react-addons-update');
-var connect = require('./miniredux').connect;
-var Store = require('./miniredux').Store;
+var connect = require('./mini-redux').connect;
+var Store = require('./mini-redux').Store;
+var pushIn = require('./mini-immutable').pushIn;
+var updateIn = require('./mini-immutable').updateIn;
 
 // Initial state
 var initialState = {
@@ -33,46 +35,21 @@ function randomId() {
 function rootReducer(oldState, action) {
     switch(action.type) {
     case 'ADD_SPORT':
-        return update(oldState, {
-            children: {
-                $push: [{ // Sport
+        return pushIn(oldState, ['children'], [{ // Sport
+            id: randomId(),
+            name: "Football " + randomId(),
+            children: [{
+                id: randomId(),
+                name: "Major League " + randomId(),
+                children: [{
                     id: randomId(),
-                    name: "Football " + randomId(),
-                    children: [
-                        {
-                            id: randomId(),
-                            name: "Major League " + randomId(),
-                            children: [
-                                {
-                                    id: randomId(),
-                                    name: "Netherlands vs Poland" + randomId()
-                                },
-                            ]
-                        }
-                    ]
+                    name: "Netherlands vs Poland" + randomId()
                 }]
-            }
-        });
+            }]
+        }]);
     case 'UPDATE_SPORT':
-        return update(oldState, {
-            children: {
-                0: {
-                    children: {
-                        0: {
-                            children: {
-                                0: {
-                                    name: {
-                                        $apply: function (v) {
-                                            return v + "!!!!";
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }                
-            }
-        });
+        return updateIn(oldState, ['children', 0, 'children', 0, 'children', 0, 'name'],
+                  function (v) { return v + "!!!!"; });
     }
 }
 
