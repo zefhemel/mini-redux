@@ -9,14 +9,14 @@ function Store(initialState, rootReducer, debug) {
 }
 
 Store.prototype = {
-    getState: function() {
+    getState: function () {
         return this._state;
     },
-    dispatch: function(action) {
+    dispatch: function (action) {
         var oldState = this._state;
         this._state = this._reducer(oldState, action);
         this.events.emit("newState", this._state);
-        if(this._debug) {
+        if (this._debug) {
             console.log("[DEBUG] State changed from", oldState, "to", this._state);
         }
     }
@@ -24,25 +24,34 @@ Store.prototype = {
 
 function connect(RootComponent, store) {
     return React.createClass({
-        componentWillMount: function() {
+        componentWillMount: function () {
             store.events.on("newState", this.stateChanged);
         },
-        componentWillUnmount: function() {
+        componentWillUnmount: function () {
             store.events.off("newState", this.stateChanged);
         },
-        stateChanged: function(newState) {
+        stateChanged: function (newState) {
             this.setState({
                 state: newState
             });
         },
-        getInitialState: function() {
+        getInitialState: function () {
             return {
                 state: store.getState()
             };
         },
         render: function () {
             var state = this.state.state;
-            return <RootComponent state={state} dispatch={store.dispatch.bind(store)} {...this.props}/>;
+            var props = {
+                state: state,
+                dispatch: store.dispatch.bind(store),
+            };
+            for (var p in this.props) {
+                if (this.props.hasOwnProperty(p)) {
+                    props[p] = this.props[p];
+                }
+            }
+            return React.createElement(RootComponent, props);
         }
     });
 }

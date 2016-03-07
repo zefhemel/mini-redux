@@ -1,11 +1,10 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var PureRenderMixin = require('react-addons-pure-render-mixin');
-var update = require('react-addons-update');
-var connect = require('./mini-redux').connect;
-var Store = require('./mini-redux').Store;
-var pushIn = require('./mini-immutable').pushIn;
-var updateIn = require('./mini-immutable').updateIn;
+var connect = require('./redux-lite').connect;
+var Store = require('./redux-lite').Store;
+var pushIn = require('./immutable-lite').pushIn;
+var updateIn = require('./immutable-lite').updateIn;
 
 // Initial state
 var initialState = {
@@ -35,7 +34,7 @@ function randomId() {
 function rootReducer(oldState, action) {
     switch(action.type) {
     case 'ADD_SPORT':
-        return pushIn(oldState, ['children'], [{ // Sport
+        return pushIn(oldState, ['children'], [{
             id: randomId(),
             name: "Football " + randomId(),
             children: [{
