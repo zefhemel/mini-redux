@@ -1,11 +1,10 @@
 var React = require('react');
-var EventEmitter = require('event-emitter');
 
 function Store(initialState, rootReducer, debug) {
     this._state = initialState;
     this._reducer = rootReducer;
     this._debug = debug;
-    this.events = new EventEmitter();
+    this._listeners = [];
 }
 
 Store.prototype = {
@@ -15,20 +14,29 @@ Store.prototype = {
     dispatch: function (action) {
         var oldState = this._state;
         this._state = this._reducer(oldState, action);
-        this.events.emit("newState", this._state);
+        for (var i = 0; i < this._listeners.length; i++) {
+            this._listeners[i](this._state);
+
+        }
         if (this._debug) {
             console.log("[DEBUG] State changed from", oldState, "to", this._state);
         }
+    },
+    subscribe: function(listener) {
+        this._listeners.push(listener);
+    },
+    unsubscribe: function(listener) {
+        this._listeners.splice(this._listeners.indexOf(listener), 1);
     }
 };
 
 function connect(RootComponent, store) {
     return React.createClass({
         componentWillMount: function () {
-            store.events.on("newState", this.stateChanged);
+            store.subscribe(this.stateChanged);
         },
         componentWillUnmount: function () {
-            store.events.off("newState", this.stateChanged);
+            store.unsubscribe(this.stateChanged);
         },
         stateChanged: function (newState) {
             this.setState({

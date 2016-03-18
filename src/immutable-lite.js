@@ -210,7 +210,7 @@ module.exports = {
     unshiftInSpec: unshiftInSpec,
     mergeIn: mergeIn,
     mergeInSpec: mergeInSpec,
-    
+
     update: update,
     mergeSpecs: mergeSpecs,
 };

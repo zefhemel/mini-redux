@@ -17,7 +17,7 @@ var SportPage = React.createClass({
             </div>
         );
     },
-    addFootball: function() {
+    addFootball: function () {
         var sports = this.props.state.children;
         this.props.dispatch({
             type: 'ADD_SPORT',
@@ -35,7 +35,7 @@ var SportPage = React.createClass({
             }
         });
     },
-    yellFirstEvent: function() {
+    yellFirstEvent: function () {
         this.props.dispatch({
             type: 'YELL_EVENT'
         });

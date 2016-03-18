@@ -13,9 +13,9 @@ var initialState = {
                 id: 8001,
                 name: "Lakers vs Chicago Bulls"
             }, {
-                    id: 8002,
-                    name: "Zef vs Radek"
-                }]
+                id: 8002,
+                name: "Zef vs Radek"
+            }]
         }]
     }]
 };
@@ -27,7 +27,9 @@ function rootReducer(oldState, action) {
             return immutable.pushIn(oldState, ['children'], [action.data]);
         case 'YELL_EVENT':
             return immutable.applyIn(oldState, ['children', 0, 'children', 0, 'children', 0, 'name'],
-                function (v) { return v + "!!!"; });
+                function (v) {
+                    return v + "!!!";
+                });
     }
 }
 
